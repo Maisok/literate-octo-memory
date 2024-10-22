@@ -67,7 +67,7 @@
     @include('components.search-form') <!-- Подключение формы поиска -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
     <div id="map" style="width: 100%; height: 400px"></div>
-    <h3>Результаты поиска:</h3>
+    <h3 class="resultsearch">Результаты поиска:</h3>
 
     <!-- Фильтры по параметру engine -->
     <div class="filters">
@@ -94,21 +94,38 @@
     <div class="container">
         @if($adverts->count())
             @foreach($adverts as $advert)
-                <div class="advert-block" onclick="location.href='{{ route('adverts.show', $advert->id) }}'" tabindex="0" role="button">
-                    <div class="advert-details">
-                        <!-- Вывод главного фото -->
-                        @if ($advert->main_photo_url)
-                            <img src="{{ $advert->main_photo_url }}" alt="{{ $advert->product_name }} - Главное фото" class="advert-main-photo">
-                        @endif
-                        <div>
-                            <strong>ID:</strong> {{ $advert->id }}<br>
-                            <strong>Название продукта:</strong> {{ $advert->product_name }}<br>
-                            <strong>Цена:</strong> {{ $advert->price }} ₽<br>
-                            <strong>Статус:</strong> {{ $advert->status_ad }}<br>
-                            <strong>Город:</strong> {{ $advert->user->userAddress->city ?? 'Не указан' }}<br>
-                        </div>
-                    </div>
-                </div>
+            <div class="advert-block" onclick="location.href='{{ route('adverts.show', $advert->id) }}'" tabindex="0" role="button">
+        <div class="advert-details">
+            <!-- Вывод главного фото -->
+            @if ($advert->main_photo_url)
+                <img src="{{ $advert->main_photo_url }}" alt="{{ $advert->product_name }} - Главное фото" class="advert-main-photo">
+            @else
+                <img src="{{ asset('images/dontfoto.jpg') }}" alt="Фото отсутствует" class="advert-main-photo">
+            @endif
+        </div>
+
+        <div class="list">
+            <div class="name">
+            <span class="list_name">{{ $advert->product_name }}</span>
+            <span class="end" >{{ $advert->price }} ₽</span>
+            </div>
+               
+
+               <div class="info">
+               <span class="beg">{{ $advert->number}}</span>
+               <span class="end">{{ $advert->user->userAddress->city ?? 'Не указан' }}</span>
+            </div>
+             
+             <div class="car">
+             <span>{{ $advert->brand}}</span>
+             <span>{{ $advert->model}}</span>
+             <span>{{ $advert->body}}</span>
+             <span>{{ $advert->engine}}</span>
+
+
+             </div>
+            </div>
+    </div>
             @endforeach
 
             <!-- Подключение пагинации -->

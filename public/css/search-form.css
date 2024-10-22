@@ -61,3 +61,16 @@
     margin-left: 62.6%;
 }
 
+.modification{
+    position: absolute;
+    border: 0.1px solid #ccc;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin-left: 95%;
+    margin-bottom: -9%;
+    margin-top: 5%;
+}
+

@@ -47,8 +47,8 @@
         <button type="button" id="show-button">Показать</button>
     </form>
 
-    <div id="modifications-container">
-        <label>Выберите модификации:</label>
+    <div id="modifications-container" class="modification">
+        <label>Модификации:</label>
         <div id="modifications"></div>
     </div>
 </div>

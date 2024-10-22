@@ -164,10 +164,31 @@ h2 {
 .end{
     justify-self: end;
 }
-/* .list_name{
-    margin-top: -1%;
+
+
+.filters{
+    position: absolute;
+    border: 0.1px solid #ccc;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin-left: 69%;
+    margin-bottom: -9%;
+    
 }
 
-.list_price{
+button{
+    background-color: #0077ff;
+    color: #ffffff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex-shrink: 0; /* Запрещаем сжатие кнопки */
+}
 
-} */
+.resultsearch{
+    margin-left: 4%;
+}

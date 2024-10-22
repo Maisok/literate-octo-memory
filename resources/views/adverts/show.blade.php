@@ -88,9 +88,11 @@
     <div class="advert-details">
         <!-- Вывод дополнительных фото -->
         <div class="additional-photos">
-            @if ($advert->main_photo_url)
-                <img src="{{ $advert->main_photo_url }}" alt="{{ $advert->product_name }} - Главное фото" class="img-fluid">
-            @endif
+           @if ($advert->main_photo_url)
+            <img src="{{ $advert->main_photo_url }}" alt="{{ $advert->product_name }} - Главное фото" class="img-fluid">
+        @else
+            <img src="{{ asset('images/dontfoto.jpg') }}" alt="Default Photo" class="img-fluid">
+        @endif
             @if ($advert->additional_photo_url_1)
                 <img src="{{ $advert->additional_photo_url_1 }}" alt="{{ $advert->product_name }} - Дополнительное фото 1" class="img-fluid">
             @endif
