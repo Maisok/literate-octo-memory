@@ -18,6 +18,7 @@ use App\Http\Controllers\FranchiseController;
 use App\Http\Controllers\HelpController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\MarketAnalysisController;
+use App\Http\Controllers\OrderController;
 
 
 // Главная страница
@@ -180,3 +181,7 @@ Route::get('/market-analysis', [MarketAnalysisController::class, 'index'])->name
 Route::get('/tariff-settings', function () {
     return view('tariff-settings');
 })->name('tariff.settings');
+
+Route::post('/adverts/import', [AdvertsController::class, 'import'])->name('adverts.import');
+
+//Оформление заказа

@@ -1,15 +1,5 @@
 <?php
 
-// Объяснение методов контроллера
-//- **index()**: Получает все объявления и передает их в представление.
-//- **create()**: Показывает форму для создания нового объявления.
-//- **store()**: Обрабатывает запрос на создание нового объявления, выполняет валидацию и сохраняет данные в базе данных.
-//- **show($id)**: Показывает конкретное объявление по его ID.
-//- **edit($id)**: Показывает форму для редактирования существующего объявления.
-//- **update(Request $request, $id)**: Обновляет данные объявления в базе данных.
-//- **destroy($id)**: Удаляет объявление из базы данных.
-
-
 namespace App\Http\Controllers;
 
 use App\Models\Advert;
@@ -52,17 +42,13 @@ class AdvertsController extends Controller
         return view('adverts.create');
     }
 
-
-  
     public function store(Request $request)
     {
-     
         // Валидация данных
         $validatedData = $request->validate([
             'art_number' => 'required',
             'product_name' => 'required',
             'brand' => 'required',
-            'model' => 'required',
             'price' => 'required|numeric|min:0',
         ]);
     
@@ -72,132 +58,124 @@ class AdvertsController extends Controller
         $advert->art_number = $validatedData['art_number'];
         $advert->product_name = $validatedData['product_name'];
         $advert->brand = $validatedData['brand'];
-        $advert->model = $validatedData['model'];
         $advert->price = $validatedData['price'];
   
-          // Присвоение необязательных полей, если они присутствуют в запросе
-    $optionalFields = [
-        'number', 'new_used', 'year', 'body', 'engine', 'L_R', 'F_R', 'U_D', 
-        'color', 'applicability', 'quantity', 'availability', 'main_photo_url', 
-        'additional_photo_url_1', 'additional_photo_url_2', 'additional_photo_url_3'
-    ];
+        // Присвоение необязательных полей, если они присутствуют в запросе
+        $optionalFields = [
+            'number','model', 'new_used', 'year', 'body', 'engine', 'L_R', 'F_R', 'U_D', 
+            'color', 'applicability', 'quantity', 'availability', 'main_photo_url', 
+            'additional_photo_url_1', 'additional_photo_url_2', 'additional_photo_url_3'
+        ];
 
-    foreach ($optionalFields as $field) {
-        if ($request->has($field)) {
-            $advert->$field = $request->input($field);
+        foreach ($optionalFields as $field) {
+            if ($request->has($field)) {
+                $advert->$field = $request->input($field);
+            }
         }
-    }
         $advert->save();
     
         return redirect()->route('adverts.index')->with('success', 'Объявление успешно создано.');
     }
 
-//страница объявления
-public function show($id)
-{
-    $advert = Advert::findOrFail($id);
-     // Получаем текущее значение массива из куки
-     $currentArray = json_decode(request()->cookie('viewed', '[]'), true);
+    // страница объявления
+    public function show($id)
+    {
+        $advert = Advert::findOrFail($id);
+         // Получаем текущее значение массива из куки
+         $currentArray = json_decode(request()->cookie('viewed', '[]'), true);
 
-     // Добавляем новый элемент в массив
-     $currentArray[$id] = 1;
- 
-     // Сохраняем обновленный массив в куки
-     Cookie::queue('viewed', json_encode($currentArray), 9999);
- 
+         // Добавляем новый элемент в массив
+         $currentArray[$id] = 1;
+     
+         // Сохраняем обновленный массив в куки
+         Cookie::queue('viewed', json_encode($currentArray), 9999);
+     
+        // Найти детали, которые соответствуют product_name
+        $parts = $this->findPartsByProductName($advert->product_name);
 
+        // Инициализируем переменные для хранения найденной детали
+        $foundPartId = null;
+        $foundPartName = null;
+        $foundQueryId = null;
 
+        // Если детали найдены, берем первую
+        if ($parts->isNotEmpty()) {
+            $foundPartId = $parts->first()->part_id;
+            $foundPartName = $parts->first()->part_name;
 
-    // Найти детали, которые соответствуют product_name
-    $parts = $this->findPartsByProductName($advert->product_name);
-
-    // Инициализируем переменные для хранения найденной детали
-    $foundPartId = null;
-    $foundPartName = null;
-    $foundQueryId = null;
-
-    // Если детали найдены, берем первую
-    if ($parts->isNotEmpty()) {
-        $foundPartId = $parts->first()->part_id;
-        $foundPartName = $parts->first()->part_name;
-
-        // Получаем id_queri из первого найденного запроса
-        $firstQuery = UserQuery::where('id_part', $foundPartId)->first();
-        if ($firstQuery) {
-            $foundQueryId = $firstQuery->id_queri;
+            // Получаем id_queri из первого найденного запроса
+            $firstQuery = UserQuery::where('id_part', $foundPartId)->first();
+            if ($firstQuery) {
+                $foundQueryId = $firstQuery->id_queri;
+            }
         }
-    }
 
-    // Поиск id_modification в модели BaseAvto
-    $modificationId = $this->findModificationId($advert);
+        // Поиск id_modification в модели BaseAvto
+        $modificationId = $this->findModificationId($advert);
 
-    // Поиск всех запросов с найденным id_part и id_car
-    $userQueries = UserQuery::where('id_part', $foundPartId)
-        ->where('id_car', $modificationId)
-        ->get();
+        // Поиск всех запросов с найденным id_part и id_car
+        $userQueries = UserQuery::where('id_part', $foundPartId)
+            ->where('id_car', $modificationId)
+            ->get();
 
-    // Извлекаем все id_queri из userQueries
-    $queryIds = $userQueries->pluck('id_queri')->toArray();
+        // Извлекаем все id_queri из userQueries
+        $queryIds = $userQueries->pluck('id_queri')->toArray();
 
-    // Поиск всех запросов с найденными id_queri
-    $relatedQueries = UserQuery::whereIn('id_queri', $queryIds)->get();
+        // Поиск всех запросов с найденными id_queri
+        $relatedQueries = UserQuery::whereIn('id_queri', $queryIds)->get();
 
-    // Получаем данные из BaseAvto для каждого связанного запроса
-    $relatedCars = $this->getRelatedCars($relatedQueries);
+        // Получаем данные из BaseAvto для каждого связанного запроса
+        $relatedCars = $this->getRelatedCars($relatedQueries);
 
         $userAddress = $advert->user->userAddress->address_line;
         $product_name = $advert->product_name;
         $main_photo_url = $advert->main_photo_url;
         $address_line = $userAddress;
 
-    // Передать товар, найденную деталь, модификацию и запросы в представление
-    return view('adverts.show', compact('advert', 'foundPartId', 'foundPartName', 'modificationId', 'userQueries', 'relatedQueries', 'relatedCars', 
-    'userAddress', 'product_name',  'main_photo_url',  'address_line', ));
-}
-
-private function findPartsByProductName($productName)
-{
-    return Part::where(Part::raw("'{$productName}'"), 'LIKE', Part::raw("CONCAT('%', part_name, '%')"))->get();
-}
-
-private function findModificationId($advert)
-{
-    $baseAvto = BaseAvto::where('brand', $advert->brand)
-        ->where('model', $advert->model)
-        ->where('year_from', '<=', $advert->year)
-        ->where('year_before', '>=', $advert->year)
-        ->first();
-
-    return $baseAvto ? $baseAvto->id_modification : null;
-}
-
-private function getRelatedCars($relatedQueries)
-{
-    $relatedCars = [];
-    
-    foreach ($relatedQueries as $relatedQuery) {
-        // Используем find для получения данных по id_modification
-        $carData = BaseAvto::find($relatedQuery->id_car);
-        
-        if ($carData) {
-            $relatedCars[] = [
-                'brand' => $carData->brand,
-                'model' => $carData->model,
-                'generation' => $carData->generation,
-                'year_from' => $carData->year_from,
-                'year_before' => $carData->year_before,
-                'modification' => $carData->modification,
-            ];
-        }
+        // Передать товар, найденную деталь, модификацию и запросы в представление
+        return view('adverts.show', compact('advert', 'foundPartId', 'foundPartName', 'modificationId', 'userQueries', 'relatedQueries', 'relatedCars', 
+        'userAddress', 'product_name',  'main_photo_url',  'address_line', ));
     }
 
-    return $relatedCars;
-}
+    private function findPartsByProductName($productName)
+    {
+        return Part::where(Part::raw("'{$productName}'"), 'LIKE', Part::raw("CONCAT('%', part_name, '%')"))->get();
+    }
+
+    private function findModificationId($advert)
+    {
+        $baseAvto = BaseAvto::where('brand', $advert->brand)
+            ->where('model', $advert->model)
+            ->where('year_from', '<=', $advert->year)
+            ->where('year_before', '>=', $advert->year)
+            ->first();
+
+        return $baseAvto ? $baseAvto->id_modification : null;
+    }
+
+    private function getRelatedCars($relatedQueries)
+    {
+        $relatedCars = [];
+        
+        foreach ($relatedQueries as $relatedQuery) {
+            // Используем find для получения данных по id_modification
+            $carData = BaseAvto::find($relatedQuery->id_car);
+            
+            if ($carData) {
+                $relatedCars[] = [
+                    'brand' => $carData->brand,
+                    'model' => $carData->model,
+                    'generation' => $carData->generation,
+                    'year_from' => $carData->year_from,
+                    'year_before' => $carData->year_before,
+                    'modification' => $carData->modification,
+                ];
+            }
+        }
+
+        return $relatedCars;
+    }
     
-
-
-
-
     // Обновить данные объявления в базе данных
     public function update(Request $request)
     {
@@ -277,42 +255,42 @@ private function getRelatedCars($relatedQueries)
 
     // получить все активные объявления текущего пользователя
     public function myAdverts(Request $request)
-{
-    $userId = auth()->id(); // Получаем ID текущего пользователя
+    {
+        $userId = auth()->id(); // Получаем ID текущего пользователя
 
-    // Получаем все активные объявления текущего пользователя
-    $query = Advert::where('user_id', $userId)
-                   ->where('status_ad', 'activ');
+        // Получаем все активные объявления текущего пользователя
+        $query = Advert::where('user_id', $userId)
+                       ->where('status_ad', 'activ');
 
-    // Поиск по product_name и number
-    if ($request->filled('search')) {
-        $search = $request->input('search');
-        $query->where(function ($q) use ($search) {
-            $q->where('product_name', 'like', "%{$search}%")
-              ->orWhere('number', 'like', "%{$search}%");
-        });
+        // Поиск по product_name и number
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                  ->orWhere('number', 'like', "%{$search}%");
+            });
+        }
+
+        // Получение списка марок для выпадающего списка, только для объявлений текущего пользователя
+        $brands = Advert::where('user_id', $userId)
+                        ->where('status_ad', 'activ')
+                        ->select('brand')
+                        ->distinct()
+                        ->pluck('brand');
+
+        // Фильтрация по выбранной марке
+        if ($request->filled('brand')) {
+            $brand = strtolower($request->input('brand')); // Приводим к нижнему регистру
+            $query->whereRaw('LOWER(brand) = ?', [$brand]); // Фильтруем по марке
+        }
+
+        // Получение отфильтрованных объявлений
+        $adverts = $query->paginate(100);
+
+        return view('adverts.my_adverts', compact('adverts', 'brands'));
     }
 
-    // Получение списка марок для выпадающего списка, только для объявлений текущего пользователя
-    $brands = Advert::where('user_id', $userId)
-                    ->where('status_ad', 'activ')
-                    ->select('brand')
-                    ->distinct()
-                    ->pluck('brand');
-
-    // Фильтрация по выбранной марке
-    if ($request->filled('brand')) {
-        $brand = strtolower($request->input('brand')); // Приводим к нижнему регистру
-        $query->whereRaw('LOWER(brand) = ?', [$brand]); // Фильтруем по марке
-    }
-
-    // Получение отфильтрованных объявлений
-    $adverts = $query->paginate(100);
-
-    return view('adverts.my_adverts', compact('adverts', 'brands'));
-}
-
-   // Удалить объявление из базы данных
+    // Удалить объявление из базы данных
     public function destroy($id)
     {
         $advert = Advert::findOrFail($id);
@@ -320,231 +298,253 @@ private function getRelatedCars($relatedQueries)
         return redirect()->route('adverts.index')->with('success', 'Объявление удалено успешно.');
     }
     
-public function viewed(Request $request)
-{
+    public function viewed(Request $request)
+    {
+        // Получаем данные из куки и преобразуем в массив
+        $testData = json_decode($request->cookie('viewed', '[]'), true);
 
-
-    // Получаем данные из куки и преобразуем в массив
-    $testData = json_decode($request->cookie('viewed', '[]'), true);
-
-    foreach ($testData as $id => $value) {
-        $advert = Advert::find($id);
-        if ($advert) {
-            $adverts[] = $advert;
+        foreach ($testData as $id => $value) {
+            $advert = Advert::find($id);
+            if ($advert) {
+                $adverts[] = $advert;
+            }
         }
+
+        // Передаем данные в представление
+        return view('adverts.viewed', compact('adverts'));
     }
 
-    // Передаем данные в представление
-    return view('adverts.viewed', compact('adverts'));
+    public function viewAdvert(Request $request, $advertId)
+    {
+        // Получаем данные из куки
+        $viewedAdverts = json_decode($request->cookie('viewed_adverts', '[]'), true);
 
+        // Добавляем новый товар в список просмотренных
+        if (!in_array($advertId, $viewedAdverts)) {
+            $viewedAdverts[] = $advertId;
+        }
 
-}
+        // Логируем данные перед сохранением в куки
+        Log::info('Сохраняем в куки: ' . json_encode($viewedAdverts));
 
-public function viewAdvert(Request $request, $advertId)
-{
-    // Получаем данные из куки
-    $viewedAdverts = json_decode($request->cookie('viewed_adverts', '[]'), true);
+        // Сохраняем обновленный список в куки
+        $cookie = Cookie::make('viewed_adverts', json_encode($viewedAdverts), 60 * 24 * 7); // 1 неделя
 
-    // Добавляем новый товар в список просмотренных
-    if (!in_array($advertId, $viewedAdverts)) {
-        $viewedAdverts[] = $advertId;
+        // Проверяем, что куки создается корректно
+        if ($cookie) {
+            Log::info('Куки создана: ' . $cookie->getValue());
+        } else {
+            Log::error('Ошибка при создании куки');
+        }
+
+        $value = Cookie::get('test-cookie-2');
+
+        echo $value;
+
+        //return redirect()->back()->withCookie($cookie);
+        return $value;
     }
 
-    // Логируем данные перед сохранением в куки
-    Log::info('Сохраняем в куки: ' . json_encode($viewedAdverts));
-
-    // Сохраняем обновленный список в куки
-    $cookie = Cookie::make('viewed_adverts', json_encode($viewedAdverts), 60 * 24 * 7); // 1 неделя
-
-    // Проверяем, что куки создается корректно
-    if ($cookie) {
-        Log::info('Куки создана: ' . $cookie->getValue());
-    } else {
-        Log::error('Ошибка при создании куки');
-
+    public function favorites(Request $request)
+    {
+        // Логика для отображения просмотренных товаров
+        return view('adverts.favorites');
     }
 
-    $value = Cookie::get('test-cookie-2');
+    public function search(Request $request)
+    {
+        $query = Advert::query()->where('status_ad', 'activ');
 
-    echo $value;
+        // Проверяем наличие $searchQuery
+        $searchQuery = $request->input('search_query');
 
-    //return redirect()->back()->withCookie($cookie);
-    return $value;
-}
+        // Проверяем наличие марка, модель и год
+        $brand = $request->input('brand');
+        $model = $request->input('model');
+        $year = $request->input('year');
 
+        // Если $searchQuery задан, добавляем условия поиска по названию или номеру детали
+        if ($request->filled('search_query')) {
+            $query->where(function($q) use ($searchQuery) {
+                $q->where('product_name', 'like', '%' . $searchQuery . '%');
+            });
 
-public function favorites(Request $request)
-{
-    // Логика для отображения просмотренных товаров
-    return view('adverts.favorites');
-}
+            // Определяем part_id запчасти
+            $part = Part::where('part_name', 'like', '%' . $searchQuery . '%')->first();
+            if ($part) {
+                $partId = $part->part_id; // Сохраняем найденный part_id
 
+                Log::info('Запчасть: ' . $part->part_name);
+                $Part_search = $part->part_name;
 
-public function search(Request $request)
-{
-    $query = Advert::query()->where('status_ad', 'activ');
+                // Получаем модификации из сессии или куки
+                $id_modification = $request->input('id_modification', []); // Заменить на получение из куки
 
-    // Проверяем наличие $searchQuery
-    $searchQuery = $request->input('search_query');
+                // Проверяем, есть ли модификации
+                if (!empty($id_modification)) {
+                    Log::info('Найдены id модификации:', $id_modification);
 
-    // Проверяем наличие марка, модель и год
-    $brand = $request->input('brand');
-    $model = $request->input('model');
-    $year = $request->input('year');
+                    // Получаем id_queri по id_part и id_car
+                    $idQuery = UserQuery::where('id_part', $partId)
+                        ->whereIn('id_car', $id_modification)
+                        ->pluck('id_queri')
+                        ->first();
 
-    // Если $searchQuery задан, добавляем условия поиска по названию или номеру детали
-    if ($request->filled('search_query')) {
-        $query->where(function($q) use ($searchQuery) {
-            $q->where('product_name', 'like', '%' . $searchQuery . '%')
-              ->orWhere('number', 'like', '%' . $searchQuery . '%');
-        });
+                    Log::info('id запроса: ' . json_encode($idQuery));
 
-        // Определяем part_id запчасти
-        $part = Part::where('part_name', 'like', '%' . $searchQuery . '%')->first();
-        if ($part) {
-            $partId = $part->part_id; // Сохраняем найденный part_id
+                    if (!empty($idQuery)) {
+                        // Получаем все модификации по найденному id_queri
+                        $modifications = UserQuery::where('id_queri', $idQuery)
+                            ->pluck('id_car');
 
-            Log::info('Запчасть: ' . $part->part_name);
-            $Part_search = $part->part_name;
+                        Log::info('Найдены id модификаций: ' . json_encode($modifications));
 
-            // Получаем модификации из сессии или куки
-            $id_modification = $request->input('id_modification', []); // Заменить на получение из куки
+                        // Получаем уникальные автомобили с их годами
+                        $matchingCars = BaseAvto::whereIn('id_modification', $modifications)
+                            ->get(['brand', 'model', 'year_from', 'year_before'])
+                            ->unique(function ($item) {
+                                return $item['brand'] . $item['model'] . $item['year_from'] . $item['year_before'];
+                            })
+                            ->values();
 
-            // Проверяем, есть ли модификации
-            if (!empty($id_modification)) {
-                Log::info('Найдены id модификации:', $id_modification);
+                        Log::info('Уникальные автомобили: ' . json_encode($matchingCars));
 
-                // Получаем id_queri по id_part и id_car
-                $idQuery = UserQuery::where('id_part', $partId)
-                    ->whereIn('id_car', $id_modification)
-                    ->pluck('id_queri')
-                    ->first();
+                        // Получаем все названия запчастей
+                        $partNames = Part::pluck('part_name')->toArray();
 
-                Log::info('id запроса: ' . json_encode($idQuery));
+                        // Формируем массив уникальных условий для запросов
+                        $uniqueConditions = [];
 
-                if (!empty($idQuery)) {
-                    // Получаем все модификации по найденному id_queri
-                    $modifications = UserQuery::where('id_queri', $idQuery)
-                        ->pluck('id_car');
+                        foreach ($matchingCars as $car) {
+                            $key = strtolower($car->brand) . '|' . strtolower($car->model) . '|' . $car->year_from . '|' . $car->year_before;
+                            if (!isset($uniqueConditions[$key])) {
+                                $uniqueConditions[$key] = [
+                                    'brand' => strtolower($car->brand),
+                                    'model' => strtolower($car->model),
+                                    'year_from' => $car->year_from,
+                                    'year_before' => $car->year_before,
+                                ];
+                            }
+                        }
 
-                    Log::info('Найдены id модификаций: ' . json_encode($modifications));
+                        Log::info('Уникальные автомобили (поиск): ' . json_encode(array_values($uniqueConditions)));
 
-                    // Получаем уникальные автомобили с их годами
-                    $matchingCars = BaseAvto::whereIn('id_modification', $modifications)
-                        ->get(['brand', 'model', 'year_from', 'year_before'])
-                        ->unique(function ($item) {
-                            return $item['brand'] . $item['model'] . $item['year_from'] . $item['year_before'];
-                        })
-                        ->values();
+                        // Инициализируем пустой массив для хранения всех найденных объявлений
+                        $allAds = [];
 
-                    Log::info('Уникальные автомобили: ' . json_encode($matchingCars));
+                        // Создаем массив для хранения условий
+                        $conditions = [];
 
-                    // Получаем все названия запчастей
-                    $partNames = Part::pluck('part_name')->toArray();
-
-                    // Формируем массив уникальных условий для запросов
-                    $uniqueConditions = [];
-
-                    foreach ($matchingCars as $car) {
-                        $key = strtolower($car->brand) . '|' . strtolower($car->model) . '|' . $car->year_from . '|' . $car->year_before;
-                        if (!isset($uniqueConditions[$key])) {
-                            $uniqueConditions[$key] = [
-                                'brand' => strtolower($car->brand),
-                                'model' => strtolower($car->model),
-                                'year_from' => $car->year_from,
-                                'year_before' => $car->year_before,
+                        // Формируем массив условий для запроса
+                        foreach ($uniqueConditions as $condition) {
+                            $conditions[] = [
+                                'brand' => $condition['brand'],
+                                'model' => $condition['model'],
+                                'year_from' => $condition['year_from'],
+                                'year_before' => $condition['year_before'],
                             ];
                         }
-                    }
 
-                    Log::info('Уникальные автомобили (поиск): ' . json_encode(array_values($uniqueConditions)));
+                        // Выполняем общий запрос
+                        $ads = Advert::where(function($query) use ($conditions, $Part_search) {
+                            foreach ($conditions as $condition) {
+                                $query->orWhere(function($subQuery) use ($condition, $Part_search) {
+                                    $subQuery->where('brand', $condition['brand'])
+                                        ->where('model', $condition['model'])
+                                        ->where('year', '>=', $condition['year_from'])
+                                        ->where('year', '<=', $condition['year_before'])
+                                        ->where('product_name', 'like', '%' . $Part_search . '%')
+                                        ->where('status_ad', 'activ');
+                                });
+                            }
+                        })->get();
 
-                    // Инициализируем пустой массив для хранения всех найденных объявлений
-                    $allAds = [];
+                        // Преобразуем результат в массив
+                        $allAds = $ads->toArray();
 
-                    // Создаем массив для хранения условий
-                    $conditions = [];
+                        // Логируем найденные объявления
+                        Log::info('Найдены объявления с запчастью ' . $Part_search . ': ' . json_encode($allAds));
 
-                    // Формируем массив условий для запроса
-                    foreach ($uniqueConditions as $condition) {
-                        $conditions[] = [
-                            'brand' => $condition['brand'],
-                            'model' => $condition['model'],
-                            'year_from' => $condition['year_from'],
-                            'year_before' => $condition['year_before'],
-                        ];
-                    }
+                        // Преобразуем массив обратно в коллекцию для удобства работы с пагинацией
+                        $adverts = collect($allAds);
 
-                    // Выполняем общий запрос
-                    $ads = Advert::where(function($query) use ($conditions, $Part_search) {
-                        foreach ($conditions as $condition) {
-                            $query->orWhere(function($subQuery) use ($condition, $Part_search) {
-                                $subQuery->where('brand', $condition['brand'])
-                                    ->where('model', $condition['model'])
-                                    ->where('year', '>=', $condition['year_from'])
-                                    ->where('year', '<=', $condition['year_before'])
-                                    ->where('product_name', 'like', '%' . $Part_search . '%')
-                                    ->where('status_ad', 'activ');
+                        // Оставляем только уникальные записи по id
+                        $uniqueAdverts = $adverts->unique('id');
+
+                        // Получаем массив уникальных id
+                        $uniqueIds = $uniqueAdverts->pluck('id')->toArray();
+
+                        // Получаем уникальные значения engine из уже найденных объявлений
+                        $engines = $uniqueAdverts->pluck('engine')->unique()->values()->toArray();
+
+                        // Теперь используем массив уникальных id для выборки из модели Advert
+                        $query = Advert::whereIn('id', $uniqueIds);
+
+                        // Фильтрация по параметру engine, если он был передан
+                        if ($request->filled('engines')) {
+                            $selectedEngines = $request->input('engines');
+                            
+                            // Проверяем, что выбранные engines находятся в списке доступных
+                            $validEngines = array_intersect($selectedEngines, $engines);
+                            
+                            if (!empty($validEngines)) {
+                                $query->whereIn('engine', $validEngines);
+                            }
+                        }
+
+                        // Получение результатов с пагинацией
+                        $adverts = $query->paginate(20);
+
+                        $addresses = $adverts->map(function ($advert) {
+                            return $advert->product_name ?? 'Не указан';
+                        })->filter()->values()->toArray();
+                    
+                        $prod_name = $adverts->map(function ($advert) {
+                            return $advert->product_name ?? 'Не указан';
+                        })->filter()->values()->toArray();
+
+                        $image_prod = $adverts->map(function ($advert) {
+                            return $advert->main_photo_url ?? '';
+                        })->filter()->values()->toArray();
+
+                        $advert_ids = $adverts->map(function ($advert) {
+                            return $advert->id;
+                        })->filter()->values()->toArray();
+                    
+                        // Возврат результатов в представление
+                        return view('adverts.search', compact('adverts', 'engines', 'addresses', 'prod_name', 'image_prod', 'advert_ids'));
+                    } else {
+                        // Одиночный запрос
+                        // Фильтрация по марке и модели
+                        if ($request->filled('brand') && $request->filled('model')) {
+                            if ($request->filled('year')) {
+                                // Получаем поколение модели по году
+                                $generation = BaseAvto::where('brand', $brand)
+                                    ->where('model', $model)
+                                    ->where('year_from', '<=', $year)
+                                    ->where('year_before', '>=', $year)
+                                    ->first();
+
+                                if ($generation) {
+                                    // Если поколение найдено, фильтруем по годам
+                                    $query->whereBetween('year', [$generation->year_from, $generation->year_before]);
+                                } else {
+                                    return back()->withErrors(['message' => 'Для указанного года не найдено подходящего поколения модели.']);
+                                }
+                            }
+
+                            // Фильтрация по марке и модели
+                            $query->where('brand', $brand)->where('model', $model);
+                        } elseif ($request->filled('brand')) {
+                            // Поиск объявлений только по марке
+                            $query->where(function($q) use ($brand) {
+                                $q->where('brand', 'like', '%' . $brand . '%')
+                                  ->orWhere('applicability', 'like', '%' . $brand . '%');
                             });
                         }
-                    })->get();
-
-                    // Преобразуем результат в массив
-                    $allAds = $ads->toArray();
-
-                    // Логируем найденные объявления
-                    Log::info('Найдены объявления с запчастью ' . $Part_search . ': ' . json_encode($allAds));
-
-                    // Преобразуем массив обратно в коллекцию для удобства работы с пагинацией
-                    $adverts = collect($allAds);
-
-                    // Оставляем только уникальные записи по id
-                    $uniqueAdverts = $adverts->unique('id');
-
-                    // Получаем массив уникальных id
-                    $uniqueIds = $uniqueAdverts->pluck('id')->toArray();
-
-                    // Получаем уникальные значения engine из уже найденных объявлений
-                    $engines = $uniqueAdverts->pluck('engine')->unique()->values()->toArray();
-
-                    // Теперь используем массив уникальных id для выборки из модели Advert
-                    $query = Advert::whereIn('id', $uniqueIds);
-
-                    // Фильтрация по параметру engine, если он был передан
-                    if ($request->filled('engines')) {
-                        $selectedEngines = $request->input('engines');
-                        
-                        // Проверяем, что выбранные engines находятся в списке доступных
-                        $validEngines = array_intersect($selectedEngines, $engines);
-                        
-                        if (!empty($validEngines)) {
-                            $query->whereIn('engine', $validEngines);
-                        }
                     }
-
-                    // Получение результатов с пагинацией
-                    $adverts = $query->paginate(20);
-
-                    $addresses = $adverts->map(function ($advert) {
-                        return $advert->product_name ?? 'Не указан';
-                    })->filter()->values()->toArray();
-                
-                    $prod_name = $adverts->map(function ($advert) {
-                        return $advert->product_name ?? 'Не указан';
-                    })->filter()->values()->toArray();
-
-                    $image_prod = $adverts->map(function ($advert) {
-                        return $advert->main_photo_url ?? '';
-                    })->filter()->values()->toArray();
-
-                    $advert_ids = $adverts->map(function ($advert) {
-                        return $advert->id;
-                    })->filter()->values()->toArray();
-                
-                    // Возврат результатов в представление
-                    return view('adverts.search', compact('adverts', 'engines', 'addresses', 'prod_name', 'image_prod', 'advert_ids'));
                 } else {
-                    // Одиночный запрос
+                    // Если модификации не выбраны, продолжаем поиск без учета модификаций
                     // Фильтрация по марке и модели
                     if ($request->filled('brand') && $request->filled('model')) {
                         if ($request->filled('year')) {
@@ -574,96 +574,170 @@ public function search(Request $request)
                     }
                 }
             } else {
-                // Если модификации не выбраны, продолжаем поиск без учета модификаций
-                // Фильтрация по марке и модели
-                if ($request->filled('brand') && $request->filled('model')) {
-                    if ($request->filled('year')) {
-                        // Получаем поколение модели по году
-                        $generation = BaseAvto::where('brand', $brand)
-                            ->where('model', $model)
-                            ->where('year_from', '<=', $year)
-                            ->where('year_before', '>=', $year)
-                            ->first();
+                // Если название детали не найдено, проверяем на наличие номера детали в таблице users_queries
+                $userQueries = UserQuery::where('id_queri', $searchQuery)->get();
 
-                        if ($generation) {
-                            // Если поколение найдено, фильтруем по годам
-                            $query->whereBetween('year', [$generation->year_from, $generation->year_before]);
-                        } else {
-                            return back()->withErrors(['message' => 'Для указанного года не найдено подходящего поколения модели.']);
+                if ($userQueries->isNotEmpty()) {
+                    // Если номер детали найден, выводим сообщение в консоль
+                    Log::info('Происходит поиск по номеру');
+
+                    // Получаем все id_queri и id_car
+                    $idQueriList = $userQueries->pluck('id_queri')->toArray();
+                    $idCarList = $userQueries->pluck('id_car')->toArray();
+                    
+                    // Выводим id_queri и id_car в консоль
+                    Log::info('Найдены id_queri: ' . json_encode($idQueriList));
+                    Log::info('Найдены id_car: ' . json_encode($idCarList));
+                    
+                    // Получаем id_modification по id_car из таблицы base_avto
+                    $modifications = BaseAvto::whereIn('id_modification', $idCarList)->get();
+                    
+                    // Инициализируем пустой массив для хранения всех найденных объявлений
+                    $allAds = [];
+                    
+                    // Выводим brand, model, year_from, year_before для каждого id_modification в консоль
+                    foreach ($modifications as $modification) {
+                        Log::info('id_modification: ' . $modification->id_modification);
+                        Log::info('brand: ' . $modification->brand);
+                        Log::info('model: ' . $modification->model);
+                        Log::info('year_from: ' . $modification->year_from);
+                        Log::info('year_before: ' . $modification->year_before);
+                    
+                        // Ищем объявления в таблице adverts
+                        $ads = Advert::where('brand', $modification->brand)
+                            ->where('model', $modification->model)
+                            ->where('year', '>=', $modification->year_from)
+                            ->where('year', '<=', $modification->year_before)
+                            ->where('status_ad', 'activ')
+                            ->get();
+                            $allAds = array_merge($allAds, $ads->toArray());
+
+                            $ads2 = Advert::where('number', $searchQuery)->get();
+                    // Проверяем, что объявление найдено
+if ($ads2->isNotEmpty()) {
+    // Добавляем найденное объявление в общий массив
+    $allAds = array_merge($allAds, $ads2->toArray());
+} else {
+    Log::info('Объявление с number = ' . $searchQuery . ' не найдено.');
+}
+                        // Выводим найденные объявления в консоль
+                        Log::info('Найдены объявления для автомобиля: ' . $modification->brand . ' ' . $modification->model . ' ' . $modification->year_from . '-' . $modification->year_before);
+                        Log::info(json_encode($ads));
+                    }
+                    
+                    // Считаем количество найденных объявлений
+                    $totalAdsCount = count($allAds);
+                    Log::info('Общее количество найденных объявлений: ' . $totalAdsCount);
+                    
+                    // Преобразуем массив обратно в коллекцию для удобства работы с пагинацией
+                    $adverts = collect($allAds);
+                    
+                    // Оставляем только уникальные записи по id
+                    $uniqueAdverts = $adverts->unique('id');
+                    
+                    // Получаем массив уникальных id
+                    $uniqueIds = $uniqueAdverts->pluck('id')->toArray();
+                    
+                    // Получаем уникальные значения engine из уже найденных объявлений
+                    $engines = $uniqueAdverts->pluck('engine')->unique()->values()->toArray();
+                    
+                    // Теперь используем массив уникальных id для выборки из модели Advert
+                    $query = Advert::whereIn('id', $uniqueIds);
+                    
+                    // Фильтрация по параметру engine, если он был передан
+                    if ($request->filled('engines')) {
+                        $selectedEngines = $request->input('engines');
+                        
+                        // Проверяем, что выбранные engines находятся в списке доступных
+                        $validEngines = array_intersect($selectedEngines, $engines);
+                        
+                        if (!empty($validEngines)) {
+                            $query->whereIn('engine', $validEngines);
                         }
                     }
-
-                    // Фильтрация по марке и модели
-                    $query->where('brand', $brand)->where('model', $model);
-                } elseif ($request->filled('brand')) {
-                    // Поиск объявлений только по марке
-                    $query->where(function($q) use ($brand) {
-                        $q->where('brand', 'like', '%' . $brand . '%')
-                          ->orWhere('applicability', 'like', '%' . $brand . '%');
-                    });
+                    
+                    // Получение результатов с пагинацией
+                    $adverts = $query->paginate(20);
+                    
+                    $addresses = $adverts->map(function ($advert) {
+                        return $advert->product_name ?? 'Не указан';
+                    })->filter()->values()->toArray();
+                    
+                    $prod_name = $adverts->map(function ($advert) {
+                        return $advert->product_name ?? 'Не указан';
+                    })->filter()->values()->toArray();
+                    
+                    $image_prod = $adverts->map(function ($advert) {
+                        return $advert->main_photo_url ?? '';
+                    })->filter()->values()->toArray();
+                    
+                    $advert_ids = $adverts->map(function ($advert) {
+                        return $advert->id;
+                    })->filter()->values()->toArray();
+                    
+                    // Возврат результатов в представление
+                    return view('adverts.search', compact('adverts', 'engines', 'addresses', 'prod_name', 'image_prod', 'advert_ids'));
                 }
             }
         }
+
+        // Фильтрация по параметру engine
+        if ($request->filled('engines')) {
+            $selectedEngines = $request->input('engines');
+            $query->whereIn('engine', $selectedEngines); // Предполагается, что 'engine' — это поле в вашей таблице
+        }
+
+        // Получение всех уникальных значений для engine из найденных объявлений
+        $engines = Advert::query()
+            ->where('status_ad', 'activ')
+            ->when($searchQuery, function($query) use ($searchQuery) {
+                return $query->where(function($q) use ($searchQuery) {
+                    $q->where('product_name', 'like', '%' . $searchQuery . '%');
+                });
+            })
+            ->when($brand, function($query) use ($brand) {
+                return $query->where('brand', 'like', '%' . $brand . '%');
+            })
+            ->when($model, function($query) use ($model) {
+                return $query->where('model', $model);
+            })
+            ->when($year, function($query) use ($year, $brand, $model) {
+                // Получаем поколение модели по году
+                $generation = BaseAvto::where('brand', $brand)
+                    ->where('model', $model)
+                    ->where('year_from', '<=', $year)
+                    ->where('year_before', '>=', $year)
+                    ->first();
+
+                if ($generation) {
+                    return $query->whereBetween('year', [$generation->year_from, $generation->year_before]);
+                }
+                return $query;
+            })
+            ->distinct()
+            ->pluck('engine');
+
+        // Получение результатов с пагинацией
+        $adverts = $query->paginate(20);
+
+        // Формируем массив адресов
+        $addresses = $adverts->map(function ($advert) {
+            return $advert->user->userAddress->address_line ?? 'Не указан';
+        })->filter()->values()->toArray();
+
+        $prod_name = $adverts->map(function ($advert) {
+            return $advert->product_name ?? 'Не указан';
+        })->filter()->values()->toArray();
+
+        $image_prod = $adverts->map(function ($advert) {
+            return $advert->main_photo_url ?? '';
+        })->filter()->values()->toArray();
+
+        $advert_ids = $adverts->map(function ($advert) {
+            return $advert->id;
+        })->filter()->values()->toArray();
+
+        // Возврат результатов в представление
+        return view('adverts.search', compact('adverts', 'engines', 'addresses', 'prod_name', 'image_prod', 'advert_ids'));
     }
-
-    // Фильтрация по параметру engine
-    if ($request->filled('engines')) {
-        $selectedEngines = $request->input('engines');
-        $query->whereIn('engine', $selectedEngines); // Предполагается, что 'engine' — это поле в вашей таблице
-    }
-
-    // Получение всех уникальных значений для engine из найденных объявлений
-    $engines = Advert::query()
-        ->where('status_ad', 'activ')
-        ->when($searchQuery, function($query) use ($searchQuery) {
-            return $query->where(function($q) use ($searchQuery) {
-                $q->where('product_name', 'like', '%' . $searchQuery . '%')
-                  ->orWhere('number', 'like', '%' . $searchQuery . '%');
-            });
-        })
-        ->when($brand, function($query) use ($brand) {
-            return $query->where('brand', 'like', '%' . $brand . '%');
-        })
-        ->when($model, function($query) use ($model) {
-            return $query->where('model', $model);
-        })
-        ->when($year, function($query) use ($year, $brand, $model) {
-            // Получаем поколение модели по году
-            $generation = BaseAvto::where('brand', $brand)
-                ->where('model', $model)
-                ->where('year_from', '<=', $year)
-                ->where('year_before', '>=', $year)
-                ->first();
-
-            if ($generation) {
-                return $query->whereBetween('year', [$generation->year_from, $generation->year_before]);
-            }
-            return $query;
-        })
-        ->distinct()
-        ->pluck('engine');
-
-    // Получение результатов с пагинацией
-    $adverts = $query->paginate(20);
-
-    // Формируем массив адресов
-    $addresses = $adverts->map(function ($advert) {
-        return $advert->user->userAddress->address_line ?? 'Не указан';
-    })->filter()->values()->toArray();
-
-    $prod_name = $adverts->map(function ($advert) {
-        return $advert->product_name ?? 'Не указан';
-    })->filter()->values()->toArray();
-
-    $image_prod = $adverts->map(function ($advert) {
-        return $advert->main_photo_url ?? '';
-    })->filter()->values()->toArray();
-
-    $advert_ids = $adverts->map(function ($advert) {
-        return $advert->id;
-    })->filter()->values()->toArray();
-
-    // Возврат результатов в представление
-    return view('adverts.search', compact('adverts', 'engines', 'addresses', 'prod_name', 'image_prod', 'advert_ids'));
-}
 }

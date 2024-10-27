@@ -134,6 +134,7 @@
                 @csrf
                 <button type="submit" class="btn btn-primary">Начать чат</button>
             </form>
+           
 
             <!-- Отображение связанных запросов по найденному id_queri -->
             @if ($relatedQueries->isNotEmpty())

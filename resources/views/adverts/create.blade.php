@@ -169,7 +169,53 @@
         <button type="submit" class="btn btn-primary">Создать товар</button>
     </form>
 </div>
+
+
+<!-- Форма для импорта товаров из файла -->
+<div class="container" id="import-product-form">
+    <h2>Импорт товаров из прайс-листа</h2>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" enctype="multipart/form-data">
+        @csrf
+
+        <div class="form-group">
+            <label for="file">Выберите файл для импорта</label>
+            <input type="file" class="form-control-file" id="file" name="file" accept=".csv, .xlsx, .xls">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Импортировать товары</button>
+    </form>
+</div>
 @endsection
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ asset('js/search-form.js') }}" defer></script>
+
+<script>
+    function scrollToForm() {
+        document.getElementById('create-product-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function scrollToForm2() {
+        document.getElementById('import-product-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showText(text) {
+        document.getElementById('hoverText').textContent = text;
+        document.getElementById('hoverText').style.display = 'block';
+    }
+
+    function hideText() {
+        document.getElementById('hoverText').style.display = 'none';
+    }
+</script>
