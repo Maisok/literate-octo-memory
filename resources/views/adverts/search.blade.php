@@ -11,13 +11,13 @@
             zoom: 9, 
             controls: []
         });
-
+        
         // Массив адресов для геокодирования
         var addresses = @json($addresses);
         var prod_name = @json($prod_name);
         var image_prod = @json($image_prod);
         var advert_ids = @json($advert_ids);
-
+       
         // URL изображения по умолчанию
         var defaultImageUrl = "{{ asset('images/dontfoto.jpg') }}";
 

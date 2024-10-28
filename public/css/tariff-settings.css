@@ -1,7 +1,7 @@
-/* Добавьте этот CSS в ваш файл tariff-settings.css */
-
+/* Основные стили */
 .slider-container {
     margin-top: 20px;
+    text-align: center;
 }
 
 .slider-container label {
@@ -16,7 +16,7 @@
 
 .slider-container input[type="number"] {
     width: 80px;
-    margin-left: 100px;
+    margin-left: 10px;
     text-align: center;
 }
 
@@ -28,6 +28,7 @@
 
 .price-container {
     margin-top: 20px;
+    text-align: center;
 }
 
 .price-container p {
@@ -38,14 +39,14 @@
     color: green;
 }
 
-h1,p,h3{
-  text-align: center;
+h1, p, h3 {
+    text-align: center;
 }
 
-button{
+button {
     padding: 8px 16px;
-    background-color: #0077ff; /* Цвет фона */
-    color: white; /* Цвет текста */
+    background-color: #0077ff;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -53,6 +54,37 @@ button{
     margin-bottom: 5%;
 }
 
-button:hover{
-    background-color: #005ba1; /* Цвет фона при наведении курсора */
+button:hover {
+    background-color: #005ba1;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .slider-container input[type="range"] {
+        width: 90%;
+    }
+
+    .slider-container input[type="number"] {
+        width: 60px;
+        margin-left: 5px;
+    }
+
+    button {
+        margin-left: 40%;
+    }
+}
+
+@media (max-width: 480px) {
+    .slider-container input[type="range"] {
+        width: 100%;
+    }
+
+    .slider-container input[type="number"] {
+        width: 50px;
+        margin-left: 5px;
+    }
+
+    button {
+        margin-left: 30%;
+    }
 }

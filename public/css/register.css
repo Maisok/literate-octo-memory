@@ -15,8 +15,6 @@
     font-size: 16px;
 }
 
-
-
 /* Стили для форм */
 form {
     margin: 20px auto;
@@ -26,11 +24,11 @@ form {
     border-radius: 5px;
 }
 
-h2{
+h2 {
     margin-left: 46%;
 }
 
-input{
+input {
     margin-left: -2.5%;
 }
 
@@ -61,10 +59,10 @@ button[type="submit"]:hover {
 .suggest-view {
     max-height: 200px;
     overflow-y: auto;
-    position: absolute; /* Добавляем позиционирование, чтобы список подсказок не выходил за пределы */
-    background-color: #fff; /* Цвет фона для лучшей видимости */
-    border: 1px solid #ccc; /* Границы для списка подсказок */
-    z-index: 1000; /* Устанавливаем z-index для корректного отображения над другими элементами */
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 1000;
 }
 
 /* Стили для адреса */
@@ -89,26 +87,87 @@ button[type="submit"]:hover {
 }
 
 .password-icon {
-    width: 20px; /* Установите нужный размер */
+    width: 20px;
     height: 20px;
     margin-left: 95%;
     position: absolute;
     margin-top: -9.5%;
 }
 
-img{
+img {
     cursor: pointer;
- 
 }
 
-input[type="checkbox"]{
+input[type="checkbox"] {
     cursor: pointer;
     margin-top: 2%;
     margin-bottom: 4%;
 }
 
-input[type="radio"]{
+input[type="radio"] {
     cursor: pointer;
     margin-bottom: 4%;
     margin-left: 17%;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    h2 {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"] {
+        padding: 8px;
+    }
+
+    button[type="submit"] {
+        padding: 8px 16px;
+    }
+
+    .password-icon {
+        margin-left: 90%;
+        margin-top: -8%;
+    }
+
+    input[type="radio"] {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.5em;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"] {
+        padding: 6px;
+    }
+
+    button[type="submit"] {
+        padding: 6px 12px;
+    }
+
+    .password-icon {
+        margin-left: 85%;
+        margin-top: -7%;
+    }
+
+    input[type="radio"] {
+        margin-left: 0;
+    }
 }

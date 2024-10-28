@@ -104,3 +104,58 @@ h1 {
 .table tbody tr:hover {
     background-color: #e9e9e9;
 }
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .advert-details {
+        flex-direction: column;
+    }
+
+    .advert-details .additional-photos {
+        flex: 1 1 auto;
+    }
+
+    .advert-details .info {
+        flex: 1 1 auto;
+    }
+
+    .table th, .table td {
+        padding: 8px;
+    }
+
+    .btn-primary {
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .container_path {
+        font-size: 0.9em;
+    }
+
+    .advert-details .additional-photos img {
+        border-radius: 0;
+    }
+
+    .table th, .table td {
+        padding: 6px;
+        font-size: 0.9em;
+    }
+
+    .btn-primary {
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+}

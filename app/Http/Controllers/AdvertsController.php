@@ -19,20 +19,20 @@ class AdvertsController extends Controller
     {
         // Получаем объявления со статусом "activ"
         $query = Advert::where('status_ad', 'activ');
-    
+
         // Фильтрация по городу, если параметр передан
         if ($request->has('city') && $request->input('city') !== '') {
-            $query->whereHas('user', function($q) use ($request) {
+            $query->whereHas('user', function ($q) use ($request) {
                 $q->where('city', $request->input('city'));
             });
         }
-    
+
         // Пагинация объявлений
         $adverts = $query->paginate(20);
-    
+
         // Получаем список городов для выпадающего списка
         $cities = User::distinct()->pluck('city')->toArray(); // Получаем уникальные города из модели User
-    
+
         return view('adverts.index', compact('adverts', 'cities'));
     }
 
@@ -51,7 +51,7 @@ class AdvertsController extends Controller
             'brand' => 'required',
             'price' => 'required|numeric|min:0',
         ]);
-    
+
         // Создание объявления
         $advert = new Advert();
         $advert->user_id = auth()->id(); // Предполагается, что пользователь авторизован
@@ -59,12 +59,26 @@ class AdvertsController extends Controller
         $advert->product_name = $validatedData['product_name'];
         $advert->brand = $validatedData['brand'];
         $advert->price = $validatedData['price'];
-  
+
         // Присвоение необязательных полей, если они присутствуют в запросе
         $optionalFields = [
-            'number','model', 'new_used', 'year', 'body', 'engine', 'L_R', 'F_R', 'U_D', 
-            'color', 'applicability', 'quantity', 'availability', 'main_photo_url', 
-            'additional_photo_url_1', 'additional_photo_url_2', 'additional_photo_url_3'
+            'number',
+            'model',
+            'new_used',
+            'year',
+            'body',
+            'engine',
+            'L_R',
+            'F_R',
+            'U_D',
+            'color',
+            'applicability',
+            'quantity',
+            'availability',
+            'main_photo_url',
+            'additional_photo_url_1',
+            'additional_photo_url_2',
+            'additional_photo_url_3'
         ];
 
         foreach ($optionalFields as $field) {
@@ -73,7 +87,7 @@ class AdvertsController extends Controller
             }
         }
         $advert->save();
-    
+
         return redirect()->route('adverts.index')->with('success', 'Объявление успешно создано.');
     }
 
@@ -81,15 +95,15 @@ class AdvertsController extends Controller
     public function show($id)
     {
         $advert = Advert::findOrFail($id);
-         // Получаем текущее значение массива из куки
-         $currentArray = json_decode(request()->cookie('viewed', '[]'), true);
+        // Получаем текущее значение массива из куки
+        $currentArray = json_decode(request()->cookie('viewed', '[]'), true);
 
-         // Добавляем новый элемент в массив
-         $currentArray[$id] = 1;
-     
-         // Сохраняем обновленный массив в куки
-         Cookie::queue('viewed', json_encode($currentArray), 9999);
-     
+        // Добавляем новый элемент в массив
+        $currentArray[$id] = 1;
+
+        // Сохраняем обновленный массив в куки
+        Cookie::queue('viewed', json_encode($currentArray), 9999);
+
         // Найти детали, которые соответствуют product_name
         $parts = $this->findPartsByProductName($advert->product_name);
 
@@ -133,8 +147,19 @@ class AdvertsController extends Controller
         $address_line = $userAddress;
 
         // Передать товар, найденную деталь, модификацию и запросы в представление
-        return view('adverts.show', compact('advert', 'foundPartId', 'foundPartName', 'modificationId', 'userQueries', 'relatedQueries', 'relatedCars', 
-        'userAddress', 'product_name',  'main_photo_url',  'address_line', ));
+        return view('adverts.show', compact(
+            'advert',
+            'foundPartId',
+            'foundPartName',
+            'modificationId',
+            'userQueries',
+            'relatedQueries',
+            'relatedCars',
+            'userAddress',
+            'product_name',
+            'main_photo_url',
+            'address_line',
+        ));
     }
 
     private function findPartsByProductName($productName)
@@ -156,11 +181,11 @@ class AdvertsController extends Controller
     private function getRelatedCars($relatedQueries)
     {
         $relatedCars = [];
-        
+
         foreach ($relatedQueries as $relatedQuery) {
             // Используем find для получения данных по id_modification
             $carData = BaseAvto::find($relatedQuery->id_car);
-            
+
             if ($carData) {
                 $relatedCars[] = [
                     'brand' => $carData->brand,
@@ -175,12 +200,12 @@ class AdvertsController extends Controller
 
         return $relatedCars;
     }
-    
+
     // Обновить данные объявления в базе данных
     public function update(Request $request)
     {
         $advert = Advert::find($request->id);
-    
+
         // Обновление текстовых полей
         if ($request->art_number !== $request->old_art_number) {
             $advert->art_number = $request->art_number;
@@ -233,7 +258,7 @@ class AdvertsController extends Controller
         if ($request->availability !== $request->old_availability) {
             $advert->availability = $request->availability;
         }
-    
+
         // Обновление URL фотографий
         if ($request->main_photo_url !== $request->old_main_photo_url) {
             $advert->main_photo_url = $request->main_photo_url;
@@ -247,9 +272,9 @@ class AdvertsController extends Controller
         if ($request->additional_photo_url_3 !== $request->old_additional_photo_url_3) {
             $advert->additional_photo_url_3 = $request->additional_photo_url_3;
         }
-    
+
         $advert->save();
-    
+
         return redirect()->route('adverts.my_adverts')->with('success', 'Объявление успешно обновлено');
     }
 
@@ -260,23 +285,23 @@ class AdvertsController extends Controller
 
         // Получаем все активные объявления текущего пользователя
         $query = Advert::where('user_id', $userId)
-                       ->where('status_ad', 'activ');
+            ->where('status_ad', 'activ');
 
         // Поиск по product_name и number
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('product_name', 'like', "%{$search}%")
-                  ->orWhere('number', 'like', "%{$search}%");
+                    ->orWhere('number', 'like', "%{$search}%");
             });
         }
 
         // Получение списка марок для выпадающего списка, только для объявлений текущего пользователя
         $brands = Advert::where('user_id', $userId)
-                        ->where('status_ad', 'activ')
-                        ->select('brand')
-                        ->distinct()
-                        ->pluck('brand');
+            ->where('status_ad', 'activ')
+            ->select('brand')
+            ->distinct()
+            ->pluck('brand');
 
         // Фильтрация по выбранной марке
         if ($request->filled('brand')) {
@@ -297,7 +322,7 @@ class AdvertsController extends Controller
         $advert->delete();
         return redirect()->route('adverts.index')->with('success', 'Объявление удалено успешно.');
     }
-    
+
     public function viewed(Request $request)
     {
         // Получаем данные из куки и преобразуем в массив
@@ -365,7 +390,7 @@ class AdvertsController extends Controller
 
         // Если $searchQuery задан, добавляем условия поиска по названию или номеру детали
         if ($request->filled('search_query')) {
-            $query->where(function($q) use ($searchQuery) {
+            $query->where(function ($q) use ($searchQuery) {
                 $q->where('product_name', 'like', '%' . $searchQuery . '%');
             });
 
@@ -446,9 +471,9 @@ class AdvertsController extends Controller
                         }
 
                         // Выполняем общий запрос
-                        $ads = Advert::where(function($query) use ($conditions, $Part_search) {
+                        $ads = Advert::where(function ($query) use ($conditions, $Part_search) {
                             foreach ($conditions as $condition) {
-                                $query->orWhere(function($subQuery) use ($condition, $Part_search) {
+                                $query->orWhere(function ($subQuery) use ($condition, $Part_search) {
                                     $subQuery->where('brand', $condition['brand'])
                                         ->where('model', $condition['model'])
                                         ->where('year', '>=', $condition['year_from'])
@@ -483,10 +508,10 @@ class AdvertsController extends Controller
                         // Фильтрация по параметру engine, если он был передан
                         if ($request->filled('engines')) {
                             $selectedEngines = $request->input('engines');
-                            
+
                             // Проверяем, что выбранные engines находятся в списке доступных
                             $validEngines = array_intersect($selectedEngines, $engines);
-                            
+
                             if (!empty($validEngines)) {
                                 $query->whereIn('engine', $validEngines);
                             }
@@ -498,7 +523,7 @@ class AdvertsController extends Controller
                         $addresses = $adverts->map(function ($advert) {
                             return $advert->product_name ?? 'Не указан';
                         })->filter()->values()->toArray();
-                    
+
                         $prod_name = $adverts->map(function ($advert) {
                             return $advert->product_name ?? 'Не указан';
                         })->filter()->values()->toArray();
@@ -510,7 +535,7 @@ class AdvertsController extends Controller
                         $advert_ids = $adverts->map(function ($advert) {
                             return $advert->id;
                         })->filter()->values()->toArray();
-                    
+
                         // Возврат результатов в представление
                         return view('adverts.search', compact('adverts', 'engines', 'addresses', 'prod_name', 'image_prod', 'advert_ids'));
                     } else {
@@ -537,9 +562,9 @@ class AdvertsController extends Controller
                             $query->where('brand', $brand)->where('model', $model);
                         } elseif ($request->filled('brand')) {
                             // Поиск объявлений только по марке
-                            $query->where(function($q) use ($brand) {
+                            $query->where(function ($q) use ($brand) {
                                 $q->where('brand', 'like', '%' . $brand . '%')
-                                  ->orWhere('applicability', 'like', '%' . $brand . '%');
+                                    ->orWhere('applicability', 'like', '%' . $brand . '%');
                             });
                         }
                     }
@@ -567,9 +592,9 @@ class AdvertsController extends Controller
                         $query->where('brand', $brand)->where('model', $model);
                     } elseif ($request->filled('brand')) {
                         // Поиск объявлений только по марке
-                        $query->where(function($q) use ($brand) {
+                        $query->where(function ($q) use ($brand) {
                             $q->where('brand', 'like', '%' . $brand . '%')
-                              ->orWhere('applicability', 'like', '%' . $brand . '%');
+                                ->orWhere('applicability', 'like', '%' . $brand . '%');
                         });
                     }
                 }
@@ -584,17 +609,17 @@ class AdvertsController extends Controller
                     // Получаем все id_queri и id_car
                     $idQueriList = $userQueries->pluck('id_queri')->toArray();
                     $idCarList = $userQueries->pluck('id_car')->toArray();
-                    
+
                     // Выводим id_queri и id_car в консоль
                     Log::info('Найдены id_queri: ' . json_encode($idQueriList));
                     Log::info('Найдены id_car: ' . json_encode($idCarList));
-                    
+
                     // Получаем id_modification по id_car из таблицы base_avto
                     $modifications = BaseAvto::whereIn('id_modification', $idCarList)->get();
-                    
+
                     // Инициализируем пустой массив для хранения всех найденных объявлений
                     $allAds = [];
-                    
+
                     // Выводим brand, model, year_from, year_before для каждого id_modification в консоль
                     foreach ($modifications as $modification) {
                         Log::info('id_modification: ' . $modification->id_modification);
@@ -602,7 +627,7 @@ class AdvertsController extends Controller
                         Log::info('model: ' . $modification->model);
                         Log::info('year_from: ' . $modification->year_from);
                         Log::info('year_before: ' . $modification->year_before);
-                    
+
                         // Ищем объявления в таблице adverts
                         $ads = Advert::where('brand', $modification->brand)
                             ->where('model', $modification->model)
@@ -610,71 +635,71 @@ class AdvertsController extends Controller
                             ->where('year', '<=', $modification->year_before)
                             ->where('status_ad', 'activ')
                             ->get();
-                            $allAds = array_merge($allAds, $ads->toArray());
+                        $allAds = array_merge($allAds, $ads->toArray());
 
-                            $ads2 = Advert::where('number', $searchQuery)->get();
-                    // Проверяем, что объявление найдено
-if ($ads2->isNotEmpty()) {
-    // Добавляем найденное объявление в общий массив
-    $allAds = array_merge($allAds, $ads2->toArray());
-} else {
-    Log::info('Объявление с number = ' . $searchQuery . ' не найдено.');
-}
+                        $ads2 = Advert::where('number', $searchQuery)->get();
+                        // Проверяем, что объявление найдено
+                        if ($ads2->isNotEmpty()) {
+                            // Добавляем найденное объявление в общий массив
+                            $allAds = array_merge($allAds, $ads2->toArray());
+                        } else {
+                            Log::info('Объявление с number = ' . $searchQuery . ' не найдено.');
+                        }
                         // Выводим найденные объявления в консоль
                         Log::info('Найдены объявления для автомобиля: ' . $modification->brand . ' ' . $modification->model . ' ' . $modification->year_from . '-' . $modification->year_before);
                         Log::info(json_encode($ads));
                     }
-                    
+
                     // Считаем количество найденных объявлений
                     $totalAdsCount = count($allAds);
                     Log::info('Общее количество найденных объявлений: ' . $totalAdsCount);
-                    
+
                     // Преобразуем массив обратно в коллекцию для удобства работы с пагинацией
                     $adverts = collect($allAds);
-                    
+
                     // Оставляем только уникальные записи по id
                     $uniqueAdverts = $adverts->unique('id');
-                    
+
                     // Получаем массив уникальных id
                     $uniqueIds = $uniqueAdverts->pluck('id')->toArray();
-                    
+
                     // Получаем уникальные значения engine из уже найденных объявлений
                     $engines = $uniqueAdverts->pluck('engine')->unique()->values()->toArray();
-                    
+
                     // Теперь используем массив уникальных id для выборки из модели Advert
                     $query = Advert::whereIn('id', $uniqueIds);
-                    
+
                     // Фильтрация по параметру engine, если он был передан
                     if ($request->filled('engines')) {
                         $selectedEngines = $request->input('engines');
-                        
+
                         // Проверяем, что выбранные engines находятся в списке доступных
                         $validEngines = array_intersect($selectedEngines, $engines);
-                        
+
                         if (!empty($validEngines)) {
                             $query->whereIn('engine', $validEngines);
                         }
                     }
-                    
+
                     // Получение результатов с пагинацией
                     $adverts = $query->paginate(20);
-                    
+
                     $addresses = $adverts->map(function ($advert) {
-                        return $advert->product_name ?? 'Не указан';
+                        return $advert->user->userAddress->address_line ?? 'Не указан';
                     })->filter()->values()->toArray();
-                    
+
                     $prod_name = $adverts->map(function ($advert) {
                         return $advert->product_name ?? 'Не указан';
                     })->filter()->values()->toArray();
-                    
+
                     $image_prod = $adverts->map(function ($advert) {
                         return $advert->main_photo_url ?? '';
                     })->filter()->values()->toArray();
-                    
+
                     $advert_ids = $adverts->map(function ($advert) {
                         return $advert->id;
                     })->filter()->values()->toArray();
-                    
+
                     // Возврат результатов в представление
                     return view('adverts.search', compact('adverts', 'engines', 'addresses', 'prod_name', 'image_prod', 'advert_ids'));
                 }
@@ -690,18 +715,18 @@ if ($ads2->isNotEmpty()) {
         // Получение всех уникальных значений для engine из найденных объявлений
         $engines = Advert::query()
             ->where('status_ad', 'activ')
-            ->when($searchQuery, function($query) use ($searchQuery) {
-                return $query->where(function($q) use ($searchQuery) {
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                return $query->where(function ($q) use ($searchQuery) {
                     $q->where('product_name', 'like', '%' . $searchQuery . '%');
                 });
             })
-            ->when($brand, function($query) use ($brand) {
+            ->when($brand, function ($query) use ($brand) {
                 return $query->where('brand', 'like', '%' . $brand . '%');
             })
-            ->when($model, function($query) use ($model) {
+            ->when($model, function ($query) use ($model) {
                 return $query->where('model', $model);
             })
-            ->when($year, function($query) use ($year, $brand, $model) {
+            ->when($year, function ($query) use ($year, $brand, $model) {
                 // Получаем поколение модели по году
                 $generation = BaseAvto::where('brand', $brand)
                     ->where('model', $model)

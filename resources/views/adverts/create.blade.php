@@ -170,7 +170,6 @@
     </form>
 </div>
 
-
 <!-- Форма для импорта товаров из файла -->
 <div class="container" id="import-product-form">
     <h2>Импорт товаров из прайс-листа</h2>

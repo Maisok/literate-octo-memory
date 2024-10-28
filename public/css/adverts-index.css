@@ -1,57 +1,49 @@
-.advert-block {
-    width: 60%; /* Задаем процентную ширину относительно ширины экрана */
-    border: 1px solid #ccc;
-    margin: 20px auto; /* Центрируем блок по горизонтали и задаем вертикальные отступы */
-    margin-left: 50px; /* Добавляем отступ слева */
-    cursor: pointer;
-    transition: background-color 0.3s;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Эффект тени */
-        border-radius: 15px;
-    
+/* Основные стили */
+body {
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
-.advert-block:hover {
-    background-color: #f0f8ff; /* Цвет выделения (светло-синий) */
+h2 {
+    padding-left: 60px;
 }
 
-.advert-details {
-    display: flex;
-    justify-content: space-between;
-    
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 .banner {
     max-width: 92%;
     height: auto;
-    margin: 0 auto; /* Центрирует баннер по горизонтали */
-    display: block; /* Обязательно для центрирования */
-    border-radius: 20px; /* Скругляет углы баннера */
-    
-}
-body {
-    font-family:  "Nunito", sans-serif; 
-    font-optical-sizing: auto;  font-style: normal;
-} 
-h2 {
-    padding-left: 60px; /* Добавляет отступ слева в 20px */
+    margin: 0 auto;
+    display: block;
+    border-radius: 20px;
 }
 
-/* Стили для блока объявления */
 .advert-block {
-    border: 1px solid #ddd;
-    border-radius: 15px;
-    margin-bottom: 20px;
+    width: 60%;
+    border: 1px solid #ccc;
+    margin: 20px auto;
+    margin-left: 50px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    display: grid;
+    grid-template-columns: 25% 75%;
+    column-gap: 50px;
 }
 
 .advert-block:hover {
-    background-color: #f9f9f9;
+    background-color: #f0f8ff;
 }
 
 .advert-details {
     display: flex;
-    gap: 20px;
+    justify-content: space-between;
 }
 
 .advert-main-photo {
@@ -61,65 +53,18 @@ h2 {
     border-radius: 15px;
 }
 
-.advert-details div {
-    flex: 1;
-}
-
-/* .list{
-    margin-top: 2%;
-} */
-
-.statistic {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    padding: 15px;
-    margin-top: 20px;
-    text-align: center;
-}
-.statistic h3 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #343a40;
-}
-.statistic p {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #6c757d;
-}
-.statistic .min-price {
-    color: green;
-}
-.statistic .avg-price {
-    color: orange;
-}
-.statistic .max-price {
-    color: red;
-}
-
-.advert-block{
-    display: grid;
-    grid-template-columns: 25% 75%;
-    column-gap: 50px;
-}
-
-
-.advert-block>.list{
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr;
-}
-
-.list{
+.list {
     width: 90%;
 }
-.list>.car{
+
+.list>.car {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     align-items: center;
     justify-items: start;
 }
 
-.list>.car>span{
+.list>.car>span {
     background-color: rgb(251, 231, 182);
     padding: 3px;
     padding-left: 10px;
@@ -128,7 +73,7 @@ h2 {
     font-size: 14px;
 }
 
-.list>.name{
+.list>.name {
     display: grid;
     grid-template-columns: 80% 20%;
     align-items: center;
@@ -137,21 +82,19 @@ h2 {
     font-weight: bold;
 }
 
-
-
-.list>.info{
+.list>.info {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
     justify-items: start;
 }
 
-.list>.info>.end{
+.list>.info>.end {
     color: red;
     font-size: 14px;
 }
 
-.beg{
+.beg {
     background-color: #f0f0f0;
     padding: 2px;
     padding-left: 10px;
@@ -161,12 +104,11 @@ h2 {
     font-size: 14px;
 }
 
-.end{
+.end {
     justify-self: end;
 }
 
-
-.filters{
+.filters {
     position: absolute;
     border: 0.1px solid #ccc;
     background-color: #ffffff;
@@ -176,19 +118,87 @@ h2 {
     width: 300px;
     margin-left: 69%;
     margin-bottom: -9%;
-    
 }
 
-button{
+button {
     background-color: #0077ff;
     color: #ffffff;
     padding: 8px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    flex-shrink: 0; /* Запрещаем сжатие кнопки */
+    flex-shrink: 0;
 }
 
-.resultsearch{
+.resultsearch {
     margin-left: 4%;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .advert-block {
+        width: 90%;
+        margin-left: 0;
+        grid-template-columns: 1fr;
+        column-gap: 0;
+    }
+
+    .advert-details {
+        flex-direction: column;
+    }
+
+    .advert-main-photo {
+        width: 100%;
+        height: auto;
+    }
+
+    .list>.car {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .list>.name {
+        grid-template-columns: 1fr;
+    }
+
+    .list>.info {
+        grid-template-columns: 1fr;
+    }
+
+    .filters {
+        position: static;
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner {
+        display: none;
+    }
+
+    .advert-block {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .list>.car {
+        grid-template-columns: 1fr;
+    }
+
+    .list>.name {
+        grid-template-columns: 1fr;
+    }
+
+    .list>.info {
+        grid-template-columns: 1fr;
+    }
+
+    h2 {
+        padding-left: 10px;
+    }
 }

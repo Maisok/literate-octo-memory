@@ -1,3 +1,4 @@
+/* Основные стили */
 .chat-messages {
     display: flex;
     flex-direction: column;
@@ -12,14 +13,14 @@
 
 .sent {
     align-self: flex-end;
-    background-color: #d1e7dd; /* Цвет фона для отправленных сообщений */
-    color: #0f5132; /* Цвет текстадля отправленных сообщений */
+    background-color: #d1e7dd;
+    color: #0f5132;
 }
 
 .received {
     align-self: flex-start;
-    background-color: #f8d7da; /* Цвет фона для полученных сообщений */
-    color: #721c24; /* Цвет текста для полученных сообщений */
+    background-color: #f8d7da;
+    color: #721c24;
 }
 
 .message-date {
@@ -34,6 +35,32 @@
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
-   
 }
 
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .message {
+        max-width: 80%;
+    }
+
+    .avatar {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .message {
+        max-width: 90%;
+        padding: 8px;
+    }
+
+    .avatar {
+        width: 25px;
+        height: 25px;
+    }
+
+    .message-date {
+        font-size: 0.8em;
+    }
+}

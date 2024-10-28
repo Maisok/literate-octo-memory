@@ -9,31 +9,34 @@
         
         <input type="text" name="search_query" placeholder="Введите название или номер детали" 
                value="{{ request()->get('search_query') }}">
-        <input type="text" id="brand-input" name="brand_input" placeholder="Введите марку">
-        <select id="brand-select" name="brand_select" class="search-list_brand">
-            <option value="">Выберите марку</option>
-            @foreach(App\Models\BaseAvto::distinct()->pluck('brand') as $brand)
-                <option value="{{ $brand }}" {{ request()->get('brand') == $brand ? 'selected' : '' }}>
-                    {{ $brand }}
-                </option>
-            @endforeach
-        </select>
+
+
+       <div class="input-group">
+    <input type="text" id="brand-input" name="brand_input" placeholder="Введите марку">
+    <select id="brand-select" name="brand_select" class="search-list_brand">
+        <option value="">Выберите марку</option>
+        @foreach(App\Models\BaseAvto::distinct()->pluck('brand') as $brand)
+            <option value="{{ $brand }}" {{ request()->get('brand') == $brand ? 'selected' : '' }}>
+                {{ $brand }}
+            </option>
+        @endforeach
+    </select>
+</div>
         <input type="hidden" id="brand" name="brand" value="{{ request()->get('brand') }}">
         
-        <!-- Добавляем текстовое поле для ввода модели -->
-        <input type="text" id="model-input" name="model_input" placeholder="Введите модель">
-        
-        <!-- Выпадающий список для выбора модели -->
-        <select id="model-select" name="model_select" class="search-list_model">
-            <option value="">Выберите модель</option>
-            @if(request()->get('brand')) 
-                @foreach(App\Models\BaseAvto::where('brand', request()->get('brand'))->distinct()->pluck('model') as $model)
-                    <option value="{{ $model }}" {{ request()->get('model') == $model ? 'selected' : '' }}>
-                        {{ $model }}
-                    </option>
-                @endforeach
-            @endif
-        </select>
+        <div class="input-group">
+            <input type="text" id="model-input" name="model_input" placeholder="Введите модель">
+            <select id="model-select" name="model_select" class="search-list_model">
+                <option value="">Выберите модель</option>
+                @if(request()->get('brand')) 
+                    @foreach(App\Models\BaseAvto::where('brand', request()->get('brand'))->distinct()->pluck('model') as $model)
+                        <option value="{{ $model }}" {{ request()->get('model') == $model ? 'selected' : '' }}>
+                            {{ $model }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
         <input type="hidden" id="model" name="model" value="{{ request()->get('model') }}">
         
         <select id="year" name="year">
@@ -47,7 +50,7 @@
         <button type="button" id="show-button">Показать</button>
     </form>
 
-    <div id="modifications-container" class="modification">
+    <d iv id="modifications-container" class="modification">
         <label>Модификации:</label>
         <div id="modifications"></div>
     </div>

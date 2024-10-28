@@ -1,14 +1,17 @@
+/* Основные стили */
 body {
     font-family: "Nunito", sans-serif; 
     font-optical-sizing: auto;  
     font-style: normal;
 }   
 
-/* Стили для хедера */
 .header {
     background-color: white;
     padding: 20px;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .header a {
@@ -37,7 +40,8 @@ body {
 
 .header button:hover {
     background-color: white;
-    color: #ff4d00;}
+    color: #ff4d00;
+}
 
 .header a.current-page {
     font-weight: bold; 
@@ -59,7 +63,7 @@ body {
     line-height: 25px;
 }
 
-#citySelect {
+#city {
     font-size: 16px;
     color: black;
     background-color: white;
@@ -69,49 +73,93 @@ body {
     width: 170px;
 }
 
-#citySelect option {
+#city option {
     color: black;
 }
 
 .logo a {
     font-size: 22px;
-    color: #0077ff; /* Цвет текста */
+    color: #0077ff;
     padding: 10px;
-    text-decoration: none; /* Отключает подчеркивание при наведении */
+    text-decoration: none;
     margin: 0 10px;
-    font-weight: bold; /* Делает текст жирным */
-    } 
+    font-weight: bold;
+} 
 
-    .logo a strong {
+.logo a strong {
     font-size: 28px;
-        color: #040A11; /* Цвет для слова "Запчасть.рф" */
-    }
+    color: #040A11;
+}
 
-    .logo a:hover {
+.logo a:hover {
     font-size: 22px;
-
     padding: 10px;
-    text-decoration: none; /* Отключает подчеркивание при наведении */
-    color: #0077ff; /* Цвет текста при наведении */
+    text-decoration: none;
+    color: #0077ff;
     margin: 0 10px;
     background-color: white;
+}
+
+.logourl {
+    width: 73%;
+    height: 4em;
+    margin-top: -12%;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        padding: 10px;
     }
-    #city{
-        font-size: 16px;
-        color: black;
-        background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+
+    .header a, .header button {
+        margin: 5px 0;
+    }
+
+    .logo a {
+        font-size: 18px;
+    }
+
+    .logo a strong {
+        font-size: 24px;
+    }
+
+    .logourl {
+        width: 60%;
+        height: 3em;
+        margin-top: -8%;
+    }
+
+    #city {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
         padding: 5px;
-        width: 170px;
     }
 
-    #cityoption {
-        color: black;
+    .header a, .header button {
+        font-size: 14px;
     }
 
-    .logourl{
-        width: 73%;
-        height: 4em;
-        margin-top: -12%;
+    .logo a {
+        font-size: 16px;
     }
+
+    .logo a strong {
+        font-size: 20px;
+    }
+
+    .logourl {
+        width: 50%;
+        height: 2em;
+        margin-top: -5%;
+    }
+
+    #city {
+        font-size: 14px;
+    }
+}

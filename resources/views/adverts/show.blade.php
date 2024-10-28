@@ -18,9 +18,6 @@
             controls: []
         });
 
-
-        
-
         // Данные для геокодирования
         var address = @json($address_line);
         var prod_name = @json($product_name);
@@ -67,7 +64,6 @@
         geocodeAndAddToMap(address, prod_name, image_url, advert_id);
     }
 </script>
-
 
 <body>
 @include('components.header-seller')

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{ asset('css/search-form.css') }}">
     <link rel="stylesheet" href="{{ asset('css/adverts-index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/market.css') }}">
-   
 </head>
 <body>
 @include('components.header-seller')

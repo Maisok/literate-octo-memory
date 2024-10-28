@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" href="{{ asset('css/profile.css') }}">
-<link rel="stylesheet" href="{{ asset('css/adverts-index.css') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вы посмотрели</title>
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/adverts-index.css') }}">
 </head>
 <body>
 @include('components.header-seller')

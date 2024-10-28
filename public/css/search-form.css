@@ -1,34 +1,33 @@
+/* Основные стили */
 .ad-list {
-    position: relative; /* Изменено на relative для правильного позиционирования */
-    margin: 20px; /* Добавляем отступы вокруг формы */
-    width: 71%; /* Задаем процентную ширину относительно ширины экрана */
-    padding-left: 30px; /* Добавляет отступ слева в 30px */
+    position: relative;
+    margin: 20px;
+    width: 71%;
+    padding-left: 30px;
 }
 
 .ad-list form {
-    display: flex; /* Используем flexbox для выравнивания элементов в строку */
-    align-items: center; /* Выравниваем элементы по вертикали */
+    display: flex;
+    flex-wrap: wrap; /* Добавляем обертку для элементов */
+    align-items: center;
     border: 0.5px solid #ccc;
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3); /* Эффект тени */
-    width: 100%; /* Задаем ширину формы 100% */
-    position: relative; /* Добавляем относительное позиционирование для родительского контейнера */
-}
-
-#searchForm{
-    width: 49%; 
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    position: relative;
 }
 
 .ad-list input[type="text"],
 .ad-list select {
     padding: 8px;
-    border: 1px solid #ccc; /* Обводка серым цветом */
+    border: 1px solid #ccc;
     border-radius: 5px;
     margin-right: 10px;
-    flex-basis: 0; /* Равномерно распределяем доступное пространство между элементами */
-    flex-grow: 1; /* Равномерно распределяем доступное пространство между элементами */
+    margin-bottom: 10px; /* Добавляем отступ снизу для элементов */
+    flex-basis: 0;
+    flex-grow: 1;
 }
 
 .ad-list button {
@@ -38,7 +37,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    flex-shrink: 0; /* Запрещаем сжатие кнопки */
+    flex-shrink: 0;
 }
 
 .ad-list button:hover {
@@ -61,7 +60,7 @@
     margin-left: 62.6%;
 }
 
-.modification{
+.modification {
     position: absolute;
     border: 0.1px solid #ccc;
     background-color: #ffffff;
@@ -74,3 +73,110 @@
     margin-top: 5%;
 }
 
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .ad-list {
+        width: 90%;
+        padding-left: 0;
+    }
+
+    .ad-list form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ad-list input[type="text"],
+    .ad-list select {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .search-list_brand, .search-list_model {
+        position: static;
+        width: 100% !important;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .modification {
+        position: static;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-list {
+        width: 100%;
+        margin: 10px;
+    }
+
+    .ad-list form {
+        padding: 10px;
+    }
+
+    .ad-list input[type="text"],
+    .ad-list select {
+        padding: 6px;
+        margin-bottom: 5px;
+    }
+
+    .ad-list button {
+        padding: 6px 12px;
+    }
+}
+
+/* Основные стили */
+.input-group {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.input-group input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-group select {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    border: none;
+    border-left: 1px solid #ccc;
+    border-radius: 0 5px 5px 0;
+    background-color: #f9f9f9;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .input-group {
+        width: 100%;
+    }
+
+    .input-group input[type="text"] {
+        padding-right: 40px; /* Добавляем отступ для select */
+    }
+
+    .input-group select {
+        width: 40px !important;
+        margin: 0;
+        background-color: transparent;
+    }
+}
+
+@media (max-width: 480px) {
+    .input-group input[type="text"] {
+        padding-right: 30px; /* Добавляем отступ для select */
+    }
+
+    .input-group select {
+        width: 30px !important; /* Уменьшаем ширину select на очень маленьких экранах */
+    }
+}

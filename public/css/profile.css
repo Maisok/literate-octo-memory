@@ -1,28 +1,93 @@
-h2{
+/* profile.css */
+h2 {
     margin-left: 38%;
 }
 
-a{
+a {
     text-decoration: none;
     color: black;
     margin-left: 2%;
-   
 }
 
-a:hover{
-    color: #0077ff; 
+a:hover {
+    color: #0077ff;
 }
 
-.container{
+.container {
     margin-bottom: 1.4%;
 }
 
-#user-profile{
+#user-profile {
     margin-left: 2%;
 }
 
-.ava{
+.ava {
     width: 18%;
     height: 7em;
     border-radius: 50%;
+}
+
+/* adverts-index.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.advert-block {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.advert-block:hover {
+    background-color: #f0f8ff;
+}
+
+.advert-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    h2 {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    .ava {
+        width: 30%;
+        height: auto;
+    }
+
+    .advert-block {
+        margin: 10px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .advert-block {
+        padding: 10px;
+    }
+
+    .advert-details {
+        flex-direction: column;
+    }
+
+    .advert-details div {
+        margin-bottom: 10px;
+    }
 }

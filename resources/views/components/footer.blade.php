@@ -4,7 +4,7 @@
     
     <div class="logo2" style="float: left;">
         <a href="{{ \App\Helpers\UrlHelper::generateUrlWithCity('adverts.index', null, request()->get('city')) }}">
-                        <span style="font-size: 1.3em;">ГдеЗапчасть.рф</span>
+            <span style="font-size: 1.3em;">ГдеЗапчасть.рф</span>
         </a>
         <div class="container">
             <p>&copy; {{ date('Y') }} Все права защищены.</p>

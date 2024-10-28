@@ -1,3 +1,4 @@
+/* Основные стили */
 body {
     font-family: "Nunito", sans-serif; 
     font-optical-sizing: auto;  
@@ -7,11 +8,64 @@ body {
 }      
 
 .content {
-    padding: 0 20px; /* Задаем отступы по 20px с каждой стороны */
+    padding: 0 20px;
 }
 
 .content ul {
-    list-style-type: none; /* Убираем стандартные маркеры списка */
-    padding: 0; /* Убираем внутренний отступ у списка */
-    padding: 0 40px; /* Задаем отступы по 20px с каждой стороны */
+    list-style-type: none;
+    padding: 0;
+    padding: 0 40px;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+p {
+    text-align: justify;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .content {
+        padding: 0 10px;
+    }
+
+    .content ul {
+        padding: 0 20px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+
+    p {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: 0 5px;
+    }
+
+    .content ul {
+        padding: 0 10px;
+    }
+
+    h1 {
+        font-size: 1.3em;
+    }
+
+    h2 {
+        font-size: 1.1em;
+    }
+
+    p {
+        font-size: 0.8em;
+    }
 }

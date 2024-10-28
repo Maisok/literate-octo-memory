@@ -1,3 +1,4 @@
+/* Основные стили */
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -7,13 +8,14 @@ body {
 
 .container {
     max-width: 100%;
-    margin: 2px auto; /* Отступ от формы поиска */
+    margin: 2px auto;
     padding: 10px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow-x: auto; /* Добавляем горизонтальную прокрутку, если содержимое не помещается */
+    overflow-x: auto;
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -22,127 +24,99 @@ table {
 table th {
     background-color: #f2f2f2;
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
-
-}
 
 table th, table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    height: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 table tr:hover {
-    background-color: #f0f8ff; /* Цвет выделения (светло-синий) */
-    cursor: pointer; /* Изменение курсора на палец */
-
-}
-
-        table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-table th, table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-    height: 25px; /* Устанавливаем фиксированную высоту ячейки */
-    white-space: nowrap; /* Запрещаем перенос слов */
-    overflow: hidden; /* Скрываем содержимое, которое не помещается */
-    text-overflow: ellipsis; /* Отображаем многоточие для обрезанных строк */
+    background-color: #f0f8ff;
+    cursor: pointer;
 }
 
 .search-form {
-    display: flex; /* Используем flexbox для горизонтального расположения */
-    align-items: center; /* Выравниваем элементы по центру по вертикали */
-    margin-bottom: 10px; /* Отступ снизу */
-
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .searchInput {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    margin-right: 8px; /* Устанавливает правый внешний отступ */
-    width: 20%; /* Занимает всю доступную ширину родительского элемента */
-
+    margin-right: 8px;
+    width: 20%;
 }
 
 .brandFilter {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    margin-right: 8px; /* Устанавливает правый внешний отступ */
-    width: 10%; /* Занимает всю доступную ширину родительского элемента */
-
+    margin-right: 8px;
+    width: 10%;
 }
 
 .btn-reset {
     padding: 8px 16px;
-    background-color: #D3D3D3; /* Светло-серый цвет для фона */
-    color: black; /* Черный цвет текста */
+    background-color: #D3D3D3;
+    color: black;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    text-decoration: none; /* Убирает подчеркивание */
-    font-size: 14px; /* Уменьшает размер текста (можно изменить по желанию) */
+    text-decoration: none;
+    font-size: 14px;
 }
 
 .btn-reset:hover {
-    background-color: #C0C0C0; /* Цвет фона при наведении курсора */
+    background-color: #C0C0C0;
 }
 
 .btn-search {
     padding: 8px 16px;
-    background-color: #0077ff; /* Цвет фона */
-    color: white; /* Цвет текста */
+    background-color: #0077ff;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 8px; /* Устанавливает правый внешний отступ */
-
-    
+    margin-right: 8px;
 }
 
 .btn-search:hover {
-    background-color: #005ba1; /* Цвет фона при наведении курсора */
+    background-color: #005ba1;
 }
-
-
-
-
 
 /* Стили для модального окна */
 .modal-content {
-    border-radius: 10px; /* Задаем радиус скругления углов */
-    overflow: hidden; /* Обрезаем контент внутри модального окна по границам скругленных углов */
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-/* Дополнительные стили для вашего модального окна */
 .modal {
-    display: none; /* По умолчанию модальное окно скрыто */
-    position: fixed; /* Фиксированное позиционирование */
-    z-index: 1; /* Поверх всего остального контента */
+    display: none;
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; /* Растягиваем на всю ширину экрана */
-    height: 100%; /* Растягиваем на всю высоту экрана */
-    overflow: auto; /* Добавляем прокрутку, если контент не помещается */
-    background-color: rgba(0,0,0,0.4); /* Полупрозрачный черный фон */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
 }
 
 .modal-content {
-    background-color: #fefefe; /* Цвет фона модального окна */
-    margin: 15% auto; /* Выравниваем по центру вертикально и горизонтально */
+    background-color: #fefefe;
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 70%; /* Ширина модального окна */
-    line-height: 1.6; /* Увеличиваем межстрочный интервал */
-    font-size: 17px; /* Устанавливаем размер шрифта */
-
+    width: 70%;
+    line-height: 1.6;
+    font-size: 17px;
 }
 
 .close {
@@ -178,42 +152,6 @@ table th, table td {
     background-color: #005ba1;
 }
 
-/* Добавьте стили для модального окна и изображений */
-.modal {
-    display: none; /* Скрыто по умолчанию */
-    position: fixed; /* Оставаться на месте */
-    z-index: 1; /* Лежит над всем остальным */
-    left: 0;
-    top: 0;
-    width: 100%; /* Полная ширина */
-    height: 100%; /* Полная высота */
-    overflow: auto; /* Включить прокрутку, если необходимо */
-    background-color: rgb(0,0,0); /* Цвет фона */
-    background-color: rgba(0,0,0,0.4); /* Черный с непрозрачностью */
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% сверху и по центру */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Может быть больше или меньше, в зависимости от размера экрана */
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
 .modal-images {
     display: flex;
     align-items: center;
@@ -225,6 +163,87 @@ table th, table td {
     margin-left: 10px;
 }
 
-button{
+button {
     cursor: pointer;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .searchInput {
+        width: 50%;
+    }
+
+    .brandFilter {
+        width: 20%;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
+
+    .modal-images {
+        flex-direction: column;
+    }
+
+    .additional-images {
+        flex-direction: row;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    #modalMainImg {
+        width: 100%;
+        height: auto;
+    }
+
+    .additional-images img {
+        width: 80px;
+        height: 80px;
+        margin-right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .searchInput {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .brandFilter {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .btn-search, .btn-reset {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .modal-content {
+        width: 95%;
+    }
+
+    .modal-images {
+        flex-direction: column;
+    }
+
+    .additional-images {
+        flex-direction: row;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    #modalMainImg {
+        width: 100%;
+        height: auto;
+    }
+
+    .additional-images img {
+        width: 60px;
+        height: 60px;
+        margin-right: 10px;
+    }
 }

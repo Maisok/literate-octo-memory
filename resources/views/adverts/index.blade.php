@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -13,9 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
 
 <!-- Рекламный баннер -->
-<h1></h1>
-<img src="{{ asset('images/banner.png') }}"  alt="Реклама" class="banner">
-<p></p>
+<img src="{{ asset('images/banner.png') }}" alt="Реклама" class="banner">
 
 <h2>Поиск запчастей:</h2>
 @include('components.search-form') <!-- Подключение формы поиска -->
@@ -44,25 +43,22 @@
 
         <div class="list">
             <div class="name">
-            <span class="list_name">{{ $advert->product_name }}</span>
-            <span class="end" >{{ $advert->price }} ₽</span>
+                <span class="list_name">{{ $advert->product_name }}</span>
+                <span class="end">{{ $advert->price }} ₽</span>
             </div>
                
-
-               <div class="info">
-               <span class="beg">{{ $advert->number}}</span>
-               <span class="end">{{ $advert->user->userAddress->city ?? 'Не указан' }}</span>
+            <div class="info">
+                <span class="beg">{{ $advert->number}}</span>
+                <span class="end">{{ $advert->user->userAddress->city ?? 'Не указан' }}</span>
             </div>
              
-             <div class="car">
-             <span>{{ $advert->brand}}</span>
-             <span>{{ $advert->model}}</span>
-             <span>{{ $advert->body}}</span>
-             <span>{{ $advert->engine}}</span>
-
-
-             </div>
+            <div class="car">
+                <span>{{ $advert->brand}}</span>
+                <span>{{ $advert->model}}</span>
+                <span>{{ $advert->body}}</span>
+                <span>{{ $advert->engine}}</span>
             </div>
+        </div>
     </div>
 @endforeach
 
