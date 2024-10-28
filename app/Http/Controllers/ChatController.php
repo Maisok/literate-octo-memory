@@ -79,13 +79,15 @@ class ChatController extends Controller
         }
     
         // Проверяем, существует ли уже чат между пользователем и техподдержкой
-        $chat = Chat::where(function($query) use ($user, $supportUserId) {
-                        $query->where('user1_id', $user->id)
-                              ->where('user2_id', $supportUserId);
-                    })->orWhere(function($query) use ($user, $supportUserId) {
-                        $query->where('user1_id', $supportUserId)
-                              ->where('user2_id', $user->id);
-                    })->first();
+    $chat = Chat::where('advert_id', $advert->id)
+            ->where(function($query) use ($user, $advert) {
+                $query->where('user1_id', $user->id)
+                      ->where('user2_id', $advert->user_id)
+                      ->orWhere(function($query) use ($user, $advert) {
+                          $query->where('user1_id', $advert->user_id)
+                                ->where('user2_id', $user->id);
+                      });
+            })->first();
     
         if (!$chat) {
             // Если чат не существует, создаем новый
